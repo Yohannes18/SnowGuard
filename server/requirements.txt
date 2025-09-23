@@ -1,0 +1,9 @@
+FastAPI
+uvicorn
+sqlalchemy
+pydantic
+httpx
+email-validator
+python-multipart
+pytest
+pytest-asyncio
