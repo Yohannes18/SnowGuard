@@ -1,41 +1,35 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from app.routers import auth, users, profile, analysis
 
-from app.auth import fastapi_users, auth_backend
-from app.schemas.user import UserCreate, UserRead, UserUpdate
+app = FastAPI(
+    title="SnowGuard API",
+    description="Backend for SnowGuard frontend",
+    version="1.0.0"
+)
 
-# Routers
-from app.routes import analysis, users, admin_users  # admin_users.py contains admin-only routes
-
-app = FastAPI(title="SnowGuard API")
-
-# --- CORS ---
+# -----------------------
+# CORS (frontend integration)
+# -----------------------
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "https://snowguard.app"],
+    allow_origins=["http://127.0.0.1:8000", "http://localhost:5173"],  
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# --- FastAPI Users authentication ---
-app.include_router(
-    fastapi_users.get_auth_router(auth_backend),
-    prefix="/auth/jwt",
-    tags=["auth"],
-)
+# -----------------------
+# Include Routers
+# -----------------------
+app.include_router(auth.router, prefix="/auth", tags=["auth"])
+app.include_router(users.router, prefix="/users", tags=["users"])
+app.include_router(profile.router, prefix="/profile", tags=["profile"])
+app.include_router(analysis.router, prefix="/analysis", tags=["analysis"])
 
-app.include_router(
-    fastapi_users.get_register_router(UserRead, UserCreate),
-    prefix="/auth",
-    tags=["auth"],
-)
-
-# --- Regular user routes ---
-app.include_router(users.router, prefix="/users", tags=["Users"])
-
-# --- Admin routes with secret prefix for security ---
-app.include_router(admin_users.router, prefix="/admin/7f2b9c", tags=["Admin Users"])
-
-# --- Analyzer routes ---
-app.include_router(analysis.router, prefix="/analysis", tags=["Analysis"])
+# -----------------------
+# Root endpoint
+# -----------------------
+@app.get("/")
+async def root():
+    return {"message": "SnowGuard API is running"}

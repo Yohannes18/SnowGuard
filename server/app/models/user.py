@@ -1,15 +1,12 @@
-from sqlalchemy import Column, String, DateTime
-from datetime import datetime
-from fastapi_users_db_sqlalchemy import SQLAlchemyBaseUserTableUUID
-from app.core.database import Base
-from sqlalchemy.orm import relationship
+from sqlalchemy import Column, Integer, String, Boolean
+from app.database import Base
 
-class User(SQLAlchemyBaseUserTableUUID, Base):
+class User(Base):
     __tablename__ = "users"
 
-    username = Column(String, unique=True, nullable=False)
-    created_at = Column(DateTime, default=datetime.utcnow)
-
-    analyses = relationship("Analysis", back_populates="user", cascade="all, delete-orphan")
-
-
+    id = Column(Integer, primary_key=True, index=True)
+    username = Column(String, unique=True, index=True, nullable=False)
+    email = Column(String, unique=True, index=True, nullable=False)
+    hashed_password = Column(String, nullable=False)
+    is_active = Column(Boolean, default=True)
+    is_superuser = Column(Boolean, default=False)

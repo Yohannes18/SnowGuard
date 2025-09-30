@@ -1,17 +1,18 @@
-from sqlalchemy import Column, Integer, String, DateTime, Boolean, ForeignKey, func
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
+from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
-from app.core.database import Base
+from app.database import Base
 
-class Analysis(Base):
-    __tablename__ = "analysis"
+class AnalysisReport(Base):
+    __tablename__ = "analysis_reports"
 
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     url = Column(String, nullable=False)
-    result = Column(String, nullable=False)  # verdict: "phishing" / "safe"
-    virustotal_flag = Column(Boolean, default=False)
-    google_safebrowsing_flag = Column(Boolean, default=False)
-    urlhaus_flag = Column(Boolean, default=False)
+    verdict = Column(String, nullable=False)
+    virustotal = Column(String, nullable=False)
+    google_safebrowsing = Column(String, nullable=False)
+    urlhaus = Column(String, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
-    user = relationship("User", back_populates="analyses")
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    user = relationship("User", backref="reports")
