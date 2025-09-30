@@ -79,7 +79,7 @@ cd snowguard
 - Start the frontend:
 
   ```bash
-  npm start
+  npm run dev
   ```
 
 ---
